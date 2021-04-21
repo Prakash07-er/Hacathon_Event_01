@@ -37,7 +37,7 @@ async function fetchAPI (){
         dataItems.forEach((element) => {
             temp += "<tr>";
             temp += "<td>" + element.login + "</td>"
-            temp += `<td> <a target=_blank href="https://github.com/${searchQuery}"> ${element.url}</a> </td>`
+            temp += `<td> <a target=_blank href="https://github.com/${element.login}"> ${element.url}</a> </td>`
         });
         document.getElementById("data").innerHTML = temp;
     }
