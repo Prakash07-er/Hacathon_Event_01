@@ -1,28 +1,96 @@
-const form = document.getElementById('myform')
 
-form.addEventListener('submit', function(e)
-{
-    e.preventDefault()
-
-    var search = document.getElementById('search').value
+const searchForm = document.querySelector('form');
+const container = document.querySelector('.container');
 
 
-    var name = search.split(' ').join('');
+
+searchForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    searchQuery = e.target.querySelector('input').value;
+    console.log(searchQuery);
+    fetchAPI();
+    RepofetchAPI();
+    RepoFilesfetchAPI();
+});
+
+async function fetchAPI (){
+    searchQuery = document.querySelector('input').value;
+    // console.log(searchQuery);
+    const baseURL = `https://api.github.com/search/users?q=${searchQuery}`;
+    // const  baseURL=  `https://api.github.com/search/repositories?q=${searchQuery}` ; 
+    // const baseURL = `https://api.github.com/users/${searchQuery}/repos`;
 
 
-    document.getElementById('result').innerHTML=""
+    // await fetch (baseURL)
+    // .then((resp) => {
+    //     console.log(resp.json())
+    // var data=resp.json() 
+    //     console.log(data.items[0])})
+    const response = await fetch(baseURL); 
+    const data = await response.json();
+    console.log(data.items[0]);
+    const dataItems = data.items ;
 
-    var url = ("https://api.github.com/users/"+name )
+    if(dataItems.length >0){
+        var temp = "";
 
-    async function git_user_search(){
-        var result = await fetch(url);
-        var data = await result.json();
-        console.log(data);
+        dataItems.forEach((element) => {
+            temp += "<tr>";
+            temp += "<td>" + element.login + "</td>"
+            temp += `<td> <a target=_blank href="https://github.com/${searchQuery}"> ${element.url}</a> </td>`
+        });
+        document.getElementById("data").innerHTML = temp;
+    }
 
-        document.getElementById('result').innerHTML=`
-        <a target = "_blank" href="https://www.github.com/${name}"> <img style="width:100px; height:100px; border-color:black; margin-right:40px;" src="${data.avatar_url}"/ > </a>
-        `   
-     }
-     git_user_search()
+}
 
-})
+async function RepofetchAPI (){
+    searchQuery = document.querySelector('input').value;
+    // console.log(searchQuery);
+    
+    // const baseURL = `https://api.github.com/search/users?q=${searchQuery}`;
+    // const  baseURL=  `https://api.github.com/search/repositories?q=${searchQuery}` ; 
+    const repobaseURL = `https://api.github.com/users/${searchQuery}/repos`;
+    
+
+    const response = await fetch(repobaseURL); 
+    const dataItems = await response.json();
+    console.log(dataItems);
+
+    if(dataItems.length >0){
+        var temp = "";
+
+        dataItems.forEach((element) => {
+            temp += "<tr>";
+            temp += "<td>" + element.name + "</a></td>"
+        });
+        document.getElementById("dataitems").innerHTML = temp;
+    }
+
+}
+
+
+async function RepoFilesfetchAPI (){
+    searchQuery = document.querySelector('input').value;
+    // console.log(searchQuery);
+    
+    // const baseURL = `https://api.github.com/search/users?q=${searchQuery}`;
+    // const  baseURL=  `https://api.github.com/search/repositories?q=${searchQuery}` ; 
+    const repobaseURL = `https://api.github.com/users/${searchQuery}/repos`;
+    
+
+    const response = await fetch(repobaseURL); 
+    const dataItems = await response.json();
+    console.log(dataItems);
+
+    if(dataItems.length >0){
+        var temp = "";
+
+        dataItems.forEach((element) => {
+            temp += "<tr>";
+            temp += `<td> <a target=_blank href="https://github.com/${searchQuery}/${element.name}"> ${element.name}</a> </td>`
+        });
+        document.getElementById("repo_files").innerHTML = temp;
+    }
+
+}
